@@ -1,0 +1,22 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connetti il tuo account LIRCA",
+        "description": "Inserisci le credenziali del portale clienti utenti.lirca.it",
+        "data": {
+          "username": "Email",
+          "password": "Password"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Credenziali non valide",
+      "cannot_connect": "Impossibile raggiungere il portale LIRCA",
+      "unknown": "Errore imprevisto"
+    },
+    "abort": {
+      "already_configured": "Questo account è già configurato"
+    }
+  }
+}
