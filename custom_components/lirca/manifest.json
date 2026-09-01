@@ -1,0 +1,11 @@
+{
+  "domain": "lirca",
+  "name": "LIRCA",
+  "codeowners": [],
+  "config_flow": true,
+  "documentation": "https://github.com/tuo-utente/ha-lirca",
+  "integration_type": "hub",
+  "iot_class": "cloud_polling",
+  "requirements": ["beautifulsoup4"],
+  "version": "0.1.0"
+}
