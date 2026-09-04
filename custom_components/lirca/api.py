@@ -3,7 +3,7 @@
 Flusso (ricavato analizzando il traffico reale del portale):
   1. GET  /index.php                 -> cookie PHPSESSID iniziale
   2. POST /index-process.php         -> login (username, password)
-  3. GET  /elenco-utenze.php?username=..    -> elenco utenze, con link codstab/codut/codut2
+  3. GET  /home-page.php?username=..        -> contiene i link con codstab/codut/codut2
   4. GET  /gestione-calore.php?...          -> tabella contatori calore/ACS e ultime letture
   5. GET  /contatori-letture.php?...        -> tabella contatori acqua Fredda/Calda e ultime letture
   6. GET  /storico-letture-calore.php?...   -> storico consumi per singolo dispositivo calore/ACS
@@ -98,14 +98,10 @@ class LircaApiClient:
         return match.group(1)
 
     async def async_get_meter_params(self, username_token: str) -> dict[str, str]:
-        """Estrae codstab/codut/codut2 dell'utenza da elenco-utenze.php.
-
-        Nota: se all'account sono associate più utenze, viene usata la prima
-        trovata nella pagina (l'integrazione supporta una sola utenza).
-        """
+        """Estrae codstab/codut/codut2 dalla home page post-login."""
         try:
             async with self._session.get(
-                f"{BASE_URL}/elenco-utenze.php",
+                f"{BASE_URL}/home-page.php",
                 params={"username": username_token},
                 headers=HEADERS_COMMON,
             ) as resp:
@@ -119,7 +115,7 @@ class LircaApiClient:
         codut2 = re.search(r"codut2=([^&\"]+)", text)
 
         if not (codstab and codut and codut2):
-            raise LircaConnectionError("Impossibile trovare i parametri utenza in elenco-utenze")
+            raise LircaConnectionError("Impossibile trovare i parametri utenza nella home page")
 
         self._meter_params = {
             "username": username_token,
