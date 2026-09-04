@@ -64,16 +64,30 @@ class LircaMeterSensor(CoordinatorEntity[LircaDataUpdateCoordinator], SensorEnti
             return reading.ultima_lettura
 
     @property
-    def extra_state_attributes(self) -> dict[str, str] | None:
+    def extra_state_attributes(self) -> dict[str, str | list[dict[str, str]]] | None:
         reading = self._reading
         if reading is None:
             return None
-        return {
+        attributes: dict[str, str | list[dict[str, str]]] = {
             "matricola": reading.matricola,
             "data_lettura": reading.data_lettura,
             "tipo": reading.tipo,
             "ubicazione": reading.ubicazione,
         }
+        if reading.storico is not None:
+            attributes["storico_letture"] = [
+                {
+                    "tipo_consumo": entry.tipo_consumo,
+                    "data_doc": entry.data_doc,
+                    "data_lettura_precedente": entry.data_lettura_precedente,
+                    "data_lettura_attuale": entry.data_lettura_attuale,
+                    "lettura_precedente": entry.lettura_precedente,
+                    "lettura_attuale": entry.lettura_attuale,
+                    "consumo": entry.consumo,
+                }
+                for entry in reading.storico
+            ]
+        return attributes
 
     @property
     def device_info(self) -> DeviceInfo:

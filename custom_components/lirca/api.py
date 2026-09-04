@@ -43,6 +43,7 @@ class LircaReading:
     # su storico-letture-calore.php (assenti per i contatori acqua).
     progr: str | None = None
     rk: str | None = None
+    storico: list["LircaHistoryEntry"] | None = None
 
 
 @dataclass
@@ -297,4 +298,15 @@ class LircaApiClient:
         await self.async_get_meter_params(username_token)
         heat_readings = await self.async_get_readings()
         water_readings = await self.async_get_water_readings()
+
+        for reading in heat_readings:
+            if not reading.progr or not reading.rk:
+                continue
+            try:
+                reading.storico = await self.async_get_heat_history(reading)
+            except LircaConnectionError:
+                _LOGGER.warning(
+                    "Impossibile recuperare lo storico per il dispositivo %s", reading.matricola
+                )
+
         return heat_readings + water_readings
