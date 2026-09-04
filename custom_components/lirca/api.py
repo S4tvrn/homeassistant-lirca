@@ -154,8 +154,14 @@ class LircaApiClient:
                 if len(cells) < 6:
                     continue
 
+                tipo = cells[0].get_text(strip=True)
+                ubicazione = cells[4].get_text(strip=True)
                 matricola = cells[5].get_text(strip=True)
-                if not matricola or not matricola.isdigit():
+                if not matricola or matricola == "-":
+                    # L'ACS non ha una matricola propria sul portale: usiamo
+                    # tipo+ubicazione come identificativo univoco del dispositivo.
+                    matricola = f"{tipo}-{ubicazione}".strip("-")
+                if not matricola:
                     continue
 
                 # Ogni riga linka storico-letture-calore.php con progr/rk del dispositivo.
@@ -165,10 +171,10 @@ class LircaApiClient:
 
                 readings.append(
                     LircaReading(
-                        tipo=cells[0].get_text(strip=True),
+                        tipo=tipo,
                         data_lettura=cells[2].get_text(strip=True),
                         ultima_lettura=cells[3].get_text(strip=True),
-                        ubicazione=cells[4].get_text(strip=True),
+                        ubicazione=ubicazione,
                         matricola=matricola,
                         progr=progr_match.group(1) if progr_match else None,
                         rk=rk_match.group(1) if rk_match else None,
@@ -204,10 +210,12 @@ class LircaApiClient:
 
             for row in table.find_all("tr"):
                 cells = row.find_all("td")
-                if len(cells) < 6:
+                if len(cells) < 11:
                     continue
 
-                matricola = cells[1].get_text(strip=True)
+                # La colonna "Matricola" (indice 2) è sempre "-" su questa pagina:
+                # l'id reale del contatore è in un <td class="d-none"> in coda alla riga.
+                matricola = cells[10].get_text(strip=True)
                 if not matricola or not matricola.isdigit():
                     continue
 
@@ -215,9 +223,9 @@ class LircaApiClient:
                     LircaReading(
                         tipo=cells[0].get_text(strip=True),
                         matricola=matricola,
-                        ubicazione=cells[2].get_text(strip=True),
-                        data_lettura=cells[4].get_text(strip=True),
-                        ultima_lettura=cells[5].get_text(strip=True),
+                        ubicazione=cells[3].get_text(strip=True),
+                        data_lettura=cells[5].get_text(strip=True),
+                        ultima_lettura=cells[6].get_text(strip=True),
                     )
                 )
 
