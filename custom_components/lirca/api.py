@@ -270,6 +270,13 @@ class LircaApiClient:
                 if len(cells) < 8:
                     continue
 
+                # Le celle data contengono uno <span class="d-none"> con la data
+                # in formato ISO (per l'ordinamento della tabella) seguito dal
+                # testo visibile: va scartato per non concatenarlo alla data.
+                for cell in (cells[2], cells[3], cells[4]):
+                    for hidden in cell.find_all(class_="d-none"):
+                        hidden.extract()
+
                 data_doc = cells[2].get_text(strip=True)
                 if not data_doc:
                     continue
@@ -285,7 +292,6 @@ class LircaApiClient:
                         consumo=cells[7].get_text(strip=True),
                     )
                 )
-            break
 
         _LOGGER.debug(
             "Trovate %d righe di storico per il dispositivo %s", len(history), reading.matricola
