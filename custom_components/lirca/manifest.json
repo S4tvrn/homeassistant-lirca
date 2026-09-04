@@ -3,7 +3,7 @@
   "name": "LIRCA",
   "codeowners": [],
   "config_flow": true,
-  "documentation": "https://github.com/tuo-utente/ha-lirca",
+  "documentation": "https://github.com/S4tvrn/homeassistant-lirca",
   "integration_type": "hub",
   "iot_class": "cloud_polling",
   "requirements": ["beautifulsoup4"],
