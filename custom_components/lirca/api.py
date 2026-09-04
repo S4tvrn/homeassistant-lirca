@@ -174,7 +174,6 @@ class LircaApiClient:
                         rk=rk_match.group(1) if rk_match else None,
                     )
                 )
-            break
 
         _LOGGER.debug("Trovati %d contatori", len(readings))
         return readings
@@ -221,7 +220,6 @@ class LircaApiClient:
                         ultima_lettura=cells[5].get_text(strip=True),
                     )
                 )
-            break
 
         _LOGGER.debug("Trovati %d contatori acqua", len(readings))
         return readings
